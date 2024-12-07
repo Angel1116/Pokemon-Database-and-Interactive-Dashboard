@@ -1,6 +1,7 @@
 from dash import dcc, html
 from dash.dependencies import Input, Output
 import pandas as pd
+import plotly.express as px
 import dash
 import os
 import plotly.graph_objects as go
@@ -8,13 +9,15 @@ import sqlite3
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 # Load the Gym.csv and Gym_Pokemon.csv files into DataFrames
 gym_df = pd.read_csv('Gym.csv')
 gym_pokemon_df = pd.read_csv('Gym_Pokemon.csv')
+# Load the Pokemon.csv file into a DataFrame
+df = pd.read_csv('Pokemon.csv')
 
 # Merge the DataFrames on the gym_id column
 merged_df = pd.merge(gym_df, gym_pokemon_df, on='gym_id')
+merged_df = pd.merge(merged_df, df, left_on='pokemon', right_on='name')
 
 # Create a new column for the gym leader image paths, ensuring the leader names are in lowercase
 merged_df['leader_image_path'] = merged_df.apply(lambda row: f"assets/gen1_leaders/{row['location'].capitalize()}_{row['leader'].lower()}.png", axis=1)
@@ -22,14 +25,14 @@ merged_df['leader_image_path'] = merged_df.apply(lambda row: f"assets/gen1_leade
 # Create a new column for the Pokémon image paths, ensuring the Pokémon names are in lowercase
 merged_df['pokemon_image_path'] = merged_df['pokemon'].apply(lambda x: f"assets/images/{x.lower()}.png")
 
-# Load the Pokemon.csv file into a DataFrame
-df = pd.read_csv('Pokemon.csv')
-
 # Add a new column for the image paths, converting the names to lowercase
 df['image_path'] = df['name'].apply(lambda x: f'assets/images/{x.lower()}.png')
 
 # Load player images
 player_images = [f"assets/players/{img}" for img in os.listdir('assets/players') if img.endswith('.png')]
+
+# bar chart
+result_df = merged_df[['gym_id', 'generation', 'pokemon', 'leader', 'type1', 'type2']]
 
 #connect all tables
 conn = sqlite3.connect("db/pokemonStats_1127.db")
@@ -42,6 +45,37 @@ app = dash.Dash(__name__)
 
 # Define the layout of the app
 app.layout = html.Div([
+    # Title
+    html.Div([
+        html.Div([
+            html.H2("Pokémon Gym Leader Battle Simulator", style={'margin': 0}),
+            html.H3("Description: ", style={'margin': 0, 'font-weight': 'normal'})
+        ], style={
+            'display': 'inline-block',
+            'vertical-align': 'top',
+            'width': '70%',
+            'box-sizing': 'border-box'
+        }),
+
+        # Instructions Section
+        html.Div(
+            "Suggestion, Recommendation, and Instruction: This is a Pokémon Gym Leader Battle Simulator. ",
+            style={
+                'display': 'inline-block',
+                'text-align': 'left',
+                'vertical-align': 'top',
+                'width': '30%',
+                'font-size': '20px',
+                'box-sizing': 'border-box'
+            }
+        )
+        ], style={
+        'display': 'flex',
+        'width': '100%',
+        'justify-content': 'space-between',
+        'align-items': 'flex-start',  # Aligns items at the top
+        'box-sizing': 'border-box'
+        }),
     # Top row with Gym Leader and their Pokémon
     html.Div([
         # Gym Leader Dropdown and Info
@@ -50,24 +84,20 @@ app.layout = html.Div([
                 id='gym-leader-dropdown',
                 options=[{'label': leader, 'value': leader} for leader in merged_df['leader'].unique()],
                 placeholder="Select a Gym Leader",
-                style={'width': '200px', 'display': 'inline-block'}
+                style={'width': '200px', 'display': 'inline-block'}  # Increased width to match
             ),
             html.Div(id='leader-info', style={'margin-top': '20px'})
-        ], style={'width': '30%', 'display': 'inline-block', 'vertical-align': 'top'}),
-        
+        ], style={'width': '20%', 'display': 'inline-block', 'vertical-align': 'top'}),
+
         # Gym Leader's Pokémon Images
         html.Div(id='pokemon-images', style={
-            'width': '70%', 
+            'width': '60%', 
             'display': 'grid', 
             'grid-template-columns': 'repeat(3, 1fr)', 
-            'grid-gap': '10px',
+            'grid-gap': '2px',
             'justify-content': 'center'
-        })
-    ], style={'width': '100%', 'display': 'flex'}),
+        }),
 
-    # Second row with Player and Pokémon Dropdowns
-    html.Div([
-        # Player Character Selection
         html.Div([
             dcc.Dropdown(
                 id='player-dropdown',
@@ -76,7 +106,7 @@ app.layout = html.Div([
                 style={'width': '200px', 'display': 'inline-block'}
             ),
             html.Div(id='player-image', style={'margin-top': '20px'})
-        ], style={'width': '30%', 'display': 'inline-block', 'vertical-align': 'top'}),
+        ], style={'width': '20%', 'display': 'inline-block', 'vertical-align': 'top'}),
         
         # Pokémon Dropdowns and Images
         html.Div([
@@ -86,7 +116,7 @@ app.layout = html.Div([
                         id=f'pokemon-dropdown-{i}',
                         options=[{'label': pokemon, 'value': pokemon} for pokemon in df['name']],
                         placeholder=f'Select Pokémon {i+1}',
-                        style={'width': '100%', 'margin-bottom': '10px'}
+                        style={'width': '100%', 'margin-top': '20px'}
                     ),
                     html.Div(id=f'image-container-{i}', style={
                         'width': '100%', 
@@ -98,31 +128,64 @@ app.layout = html.Div([
                 ], style={
                     'width': '33.33%', 
                     'padding': '5px', 
-                    'box-sizing': 'border-box'
+                    'box-sizing': 'border-box',
+                    'margin-top': '10px'
                 }) for i in range(6)
             ], style={
                 'width': '100%', 
                 'display': 'flex', 
                 'flex-wrap': 'wrap',
-                'justify-content': 'center'
+                'justify-content': 'center',
+                'align-items': 'flex-start'
             })
-        ], style={'width': '70%', 'display': 'inline-block', 'vertical-align': 'top'})
-    ], style={'width': '100%', 'display': 'flex', 'margin-top': '20px'}),
+        ], style={'width': '70%', 'display': 'inline-block', 'vertical-align': 'top', 'margin-top': '0px'}),
+    ], style={'width': '100%', 'display': 'flex'}),
 
-    # Radar Chart
     html.Div([
-        dcc.Graph(id='radar-chart', style={'width': '100%', 'height': '400px'})
-    ], style={'width': '100%', 'margin-top': '20px'}),
+        # Bar Chart 1
+        html.Div([
+            dcc.Graph(id="bar-chart-1", style={'width': '100%'})
+        ], style={'width': '50%', 'padding': '10px'}),  # Half the page width
 
-    # Distribution Line
-    html.Div([
-        dcc.Graph(id='distribution-line', style={'width': '100%', 'height': '400px'})
-    ], style={'width': '100%', 'margin-top': '20px'}),
+        html.Div("Instructions for Chart 1: Describe what this chart represents and how to interpret it.", 
+                 style={'margin-top': '10px', 'font-size': '14px', 'color': 'gray'}),
 
-    # Heatmap
+        # Bar Chart 2
+        html.Div([
+            dcc.Graph(id="bar-chart-2")
+        ], style={'width': '50%', 'padding': '10px'}),  # Half the page width
+
+        html.Div("Instructions for Chart 2: Describe what this chart represents and how to interpret it.", 
+                 style={'margin-top': '10px', 'font-size': '14px', 'color': 'gray'})
+    ], style={
+        'display': 'flex', 
+        'width': '100%', 
+        'justify-content': 'space-between',  # Adds spacing between the charts
+        'align-items': 'center'  # Aligns charts vertically in case of differing heights
+    }),
     html.Div([
-        dcc.Graph(id='heatmap', style={'width': '100%', 'height': '400px'})
-    ], style={'width': '100%', 'margin-top': '20px'})
+        # Radar Chart
+        html.Div([
+            dcc.Graph(id='radar-chart', style={'width': '100%', 'height': '400px'})
+        ], style={'width': '50%', 'margin-top': '20px'}),
+
+        # Distribution Line
+        html.Div([
+            dcc.Graph(id='distribution-line', style={'width': '100%', 'height': '400px'})
+        ], style={'width': '100%', 'margin-top': '20px'}),
+
+        # Heatmap
+        html.Div([
+            dcc.Graph(id='heatmap', style={'width': '100%', 'height': '400px'})
+        ], style={'width': '100%', 'margin-top': '20px'})
+
+
+    ],style={
+        'display': 'flex', 
+        'width': '100%', 
+        'justify-content': 'space-between',  # Adds spacing between the charts
+        'align-items': 'center'  # Aligns charts vertically in case of differing heights
+    })
 ])
 
 # Define the callback to update the leader info and Pokémon images
@@ -171,7 +234,6 @@ def update_content(*selected_pokemons):
         'Special Defense': 0,
         'Speed': 0
     }
-    radar_data = []
 
     for selected_pokemon in selected_pokemons:
         if selected_pokemon is not None:
@@ -193,15 +255,6 @@ def update_content(*selected_pokemons):
             # Add individual pokemon stats to team stats
             for stat_name in team_stats.keys():
                 team_stats[stat_name] += individual_stats[stat_name]
-
-            radar_data.append({
-                'r': list(individual_stats.values()),
-                'theta': list(individual_stats.keys()),
-                'name': selected_pokemon,
-                'type': 'scatterpolar',
-                'fill': 'toself',
-                'opacity': 0.2  # Make individual pokemon stats semi-transparent
-            })
         else:
             images.append(html.Div())
 
@@ -209,9 +262,9 @@ def update_content(*selected_pokemons):
     while len(images) < 6:
         images.append(html.Div())
 
-    # Create the radar chart with both individual and team stats
+    # Create the radar chart with only team stats
     radar_chart = {
-        'data': radar_data + [
+        'data': [
             {
                 'type': 'scatterpolar',
                 'r': list(team_stats.values()),
@@ -226,7 +279,7 @@ def update_content(*selected_pokemons):
             'polar': {
                 'radialaxis': {
                     'visible': True,
-                    'range': [0, max(sum(val) for val in zip(*[list(data['r']) if 'r' in data else [0]*6 for data in radar_data + [{'r': list(team_stats.values())}]]))]
+                    'range': [0, max(team_stats.values()) + 50]  # Adjust the range as needed
                 }
             },
             'showlegend': True,
@@ -509,7 +562,6 @@ def update_content(selected_leader, *selected_pokemons):
 
 #-----------------------------------------------------------------------------------------------
 
-
 # Define the callback to update the player image based on the selected character
 @app.callback(
     Output('player-image', 'children'),
@@ -521,5 +573,91 @@ def update_player_image(selected_player):
 
     return html.Img(src=selected_player, style={'height': '200px'})
 
+
+# Callback for barchart1
+@app.callback(
+    Output("bar-chart-1", "figure"),
+    [Input('gym-leader-dropdown', 'value')]
+)
+def update_bar_chart(selected_leader):
+    # Filter the DataFrame for the selected leader
+    filtered_df = result_df[result_df["leader"] == selected_leader]
+    
+    # Count Pokémon types (combine type1 and type2, ignoring None)
+    type_counts = (
+        pd.concat([filtered_df["type1"], filtered_df["type2"]])
+        .dropna()  # Remove NaN for Pokémon with no second type
+        .value_counts()
+        .reset_index()
+    )
+    type_counts.columns = ["Type", "Count"]
+
+    # Create bar chart
+    fig = px.bar(
+        type_counts, 
+        x="Type", 
+        y="Count", 
+        title=f"Pokémon Type Distribution for Leader {selected_leader}",
+        labels={"Type": "Pokémon Type", "Count": "Number of Pokémon"},
+        color="Type",
+        color_discrete_sequence=px.colors.qualitative.Pastel
+    )
+    
+    # Update y-axis to use a tick step of 1
+    fig.update_layout(
+        yaxis=dict(
+            tickmode="linear",
+            dtick=1,  # Set tick step to 1
+            title="Number of Pokémon"
+        )
+    )
+    
+    return fig
+
+# Callback for barchart2
+@app.callback(
+    Output("bar-chart-2", "figure"),
+    [Input(f'pokemon-dropdown-{i}', 'value') for i in range(6)]
+)
+def update_team_type_chart(*selected_pokemons):
+    # Remove None values
+    selected_pokemons = [p for p in selected_pokemons if p is not None]
+    
+    if not selected_pokemons:
+        return {}
+    
+    # Filter DataFrame for selected Pokémon
+    team_df = df[df['name'].isin(selected_pokemons)]
+    
+    # Count Pokémon types (combine type1 and type2, ignoring None)
+    type_counts = (
+        pd.concat([team_df["type1"], team_df["type2"]])
+        .dropna()  # Remove NaN for Pokémon with no second type
+        .value_counts()
+        .reset_index()
+    )
+    type_counts.columns = ["Type", "Count"]
+
+    # Create bar chart
+    fig = px.bar(
+        type_counts, 
+        x="Type", 
+        y="Count", 
+        title=f"Pokémon Type Distribution for User",
+        labels={"Type": "Pokémon Type", "Count": "Number of Pokémon"},
+        color="Type",
+        color_discrete_sequence=px.colors.qualitative.Pastel
+    )
+    
+    # Update y-axis to use a tick step of 1
+    fig.update_layout(
+        yaxis=dict(
+            tickmode="linear",
+            dtick=1,  # Set tick step to 1
+            title="Number of Pokémon"
+        )
+    )
+    
+    return fig
 if __name__ == '__main__':
     app.run_server(debug=True)

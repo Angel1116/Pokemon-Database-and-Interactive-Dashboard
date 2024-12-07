@@ -6,9 +6,34 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 
 
+gym_df = pd.read_csv('Gym.csv')
+gym_pokemon_df = pd.read_csv('Gym_Pokemon.csv')
+pokemon_df = pd.read_csv('Pokemon.csv')
+
+# Perform the joins
+merged_df = pd.merge(gym_pokemon_df, gym_df, on='gym_id')
+merged_df = pd.merge(merged_df, pokemon_df, left_on='pokemon', right_on='name')
+
+# print(merged_df.info())
+
+# Select the desired columns
+result_df = merged_df[['gym_id', 'generation', 'pokemon', 'leader', 'type1', 'type2']]
+df = result_df
+
+# Dropdown options for leaders
+leader_options = [{"label": leader, "value": leader} for leader in df["leader"].unique()]
 # Dash app
 app = dash.Dash(__name__)
 
+# html.Div([
+#             dcc.Dropdown(
+#                 id='gym-leader-dropdown',
+#                 options=[{'label': leader, 'value': leader} for leader in merged_df['leader'].unique()],
+#                 placeholder="Select a Gym Leader",
+#                 style={'width': '200px', 'display': 'inline-block'}
+#             ),
+#             html.Div(id='leader-info', style={'margin-top': '20px'})
+#         ]
 # Layout
 app.layout = html.Div([
     html.H1("Gym Pokémon Type Distribution", style={'textAlign': 'center'}),
@@ -22,13 +47,13 @@ app.layout = html.Div([
         )
     ], style={'textAlign': 'center'}),
     html.Div([
-        dcc.Graph(id="type-bar-chart")
+        dcc.Graph(id="bar-chart")
     ])
 ])
 
 # Callback for interactivity
 @app.callback(
-    Output("type-bar-chart", "figure"),
+    Output("bar-chart", "figure"),
     [Input("leader-dropdown", "value")]
 )
 def update_bar_chart(selected_leader):
