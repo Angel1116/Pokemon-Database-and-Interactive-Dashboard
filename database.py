@@ -17,3 +17,4 @@ merged_df['leader_image_path'] = merged_df.apply(lambda row: f"assets/gen1_leade
 merged_df['pokemon_image_path'] = merged_df['pokemon'].apply(lambda x: f"assets/images/{x.lower()}.png")
 
 print(merged_df.info())
+print(merged_df.head())

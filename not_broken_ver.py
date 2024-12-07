@@ -84,14 +84,14 @@ app.layout = html.Div([
                 id='gym-leader-dropdown',
                 options=[{'label': leader, 'value': leader} for leader in merged_df['leader'].unique()],
                 placeholder="Select a Gym Leader",
-                style={'width': '200px', 'display': 'inline-block'}  # Increased width to match
+                style={'width': '150px', 'display': 'inline-block'}  # Increased width to match
             ),
             html.Div(id='leader-info', style={'margin-top': '20px'})
         ], style={'width': '20%', 'display': 'inline-block', 'vertical-align': 'top'}),
 
         # Gym Leader's Pokémon Images
         html.Div(id='pokemon-images', style={
-            'width': '60%', 
+            'width': '30%', 
             'display': 'grid', 
             'grid-template-columns': 'repeat(3, 1fr)', 
             'grid-gap': '2px',
@@ -222,47 +222,76 @@ def update_leader_info(selected_leader):
 @app.callback(
     [Output(f'image-container-{i}', 'children') for i in range(6)] +
     [Output('radar-chart', 'figure')],
-    [Input(f'pokemon-dropdown-{i}', 'value') for i in range(6)]
+    [Input(f'pokemon-dropdown-{i}', 'value') for i in range(6)] +
+    [Input('gym-leader-dropdown', 'value')]
 )
-def update_content(*selected_pokemons):
+def update_content(selected_pokemon_0, selected_pokemon_1, selected_pokemon_2, 
+                   selected_pokemon_3, selected_pokemon_4, selected_pokemon_5, 
+                   selected_leader):
+    # Create a list of selected Pokémon for easier iteration
+    selected_pokemons = [
+        selected_pokemon_0, selected_pokemon_1, selected_pokemon_2, 
+        selected_pokemon_3, selected_pokemon_4, selected_pokemon_5
+    ]
+
+    print("Selected Pokémon:", selected_pokemons)
+    
+    
     images = []
     team_stats = {
         'HP': 0,
-        'Attack': 0,
-        'Defense': 0,
-        'Special Attack': 0,
-        'Special Defense': 0,
-        'Speed': 0
+        'attack': 0,
+        'defense': 0,
+        'special_attack': 0,
+        'special_defense': 0,
+        'speed': 0
     }
-
+    leader_stats = {
+        'HP': 0,
+        'attack': 0,
+        'defense': 0,
+        'special_attack': 0,
+        'special_defense': 0,
+        'speed': 0
+    }
+    
+    # Calculate team stats
     for selected_pokemon in selected_pokemons:
         if selected_pokemon is not None:
             # Get the image path
             image_path = df[df['name'] == selected_pokemon]['image_path'].values[0]
             images.append(html.Img(src=image_path, style={'max-width': '100%', 'max-height': '150px'}))
-
+            
             # Get the stats for the selected Pokémon
             pokemon_stats = df[df['name'] == selected_pokemon].iloc[0]
             individual_stats = {
                 'HP': pokemon_stats['HP'],
-                'Attack': pokemon_stats['attack'],
-                'Defense': pokemon_stats['defense'],
-                'Special Attack': pokemon_stats['special_attack'],
-                'Special Defense': pokemon_stats['special_defense'],
-                'Speed': pokemon_stats['speed']
+                'attack': pokemon_stats['attack'],
+                'defense': pokemon_stats['defense'],
+                'special_attack': pokemon_stats['special_attack'],
+                'special_defense': pokemon_stats['special_defense'],
+                'speed': pokemon_stats['speed']
             }
-
+            
             # Add individual pokemon stats to team stats
             for stat_name in team_stats.keys():
                 team_stats[stat_name] += individual_stats[stat_name]
         else:
             images.append(html.Div())
-
+    
+    # Calculate leader stats
+    if selected_leader is not None:
+        leader_df = merged_df[merged_df['leader'] == selected_leader]
+        for _, row in leader_df.iterrows():
+            pokemon_stats = row[['HP', 'attack', 'defense', 'special_attack', 'special_defense', 'speed']]
+            for stat_name in leader_stats.keys():
+                leader_stats[stat_name] += pokemon_stats[stat_name]
+    
     # Pad with empty divs if fewer than 6 Pokémon are selected
     while len(images) < 6:
         images.append(html.Div())
-
-    # Create the radar chart with only team stats
+    
+    # Create the radar chart with both team stats and leader stats
     radar_chart = {
         'data': [
             {
@@ -273,22 +302,30 @@ def update_content(*selected_pokemons):
                 'name': 'Team Total',
                 'marker': {'color': 'red'},
                 'line': {'color': 'red'}
+            },
+            {
+                'type': 'scatterpolar',
+                'r': list(leader_stats.values()),
+                'theta': list(leader_stats.keys()),
+                'fill': 'toself',
+                'name': f"{selected_leader}'s Team Total",
+                'marker': {'color': 'blue'},
+                'line': {'color': 'blue'}
             }
         ],
         'layout': {
             'polar': {
                 'radialaxis': {
                     'visible': True,
-                    'range': [0, max(team_stats.values()) + 50]  # Adjust the range as needed
+                    'range': [0, max(max(team_stats.values()), max(leader_stats.values())) + 50]  # Adjust the range as needed
                 }
             },
             'showlegend': True,
             'title': 'Team Total Stats'
         }
     }
-
+    
     return images + [radar_chart]
-
 #Yi-Syuan-----------------------------------------------------------------------------------------------
 # Define the callback to update the distribution line based on the selected Pokémon
 @app.callback(
