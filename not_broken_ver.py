@@ -103,10 +103,10 @@ app.layout = html.Div([
                 id='player-dropdown',
                 options=[{'label': img.split('/')[-1].split('.')[0], 'value': img} for img in player_images],
                 placeholder="Select Your Character",
-                style={'width': '200px', 'display': 'inline-block'}
+                style={'width': '190px', 'display': 'inline-block', 'margin-left': '60px'}
             ),
-            html.Div(id='player-image', style={'margin-top': '20px'})
-        ], style={'width': '20%', 'display': 'inline-block', 'vertical-align': 'top'}),
+            html.Div(id='player-image', style={'margin-top': '20px', 'margin-left': '100px'})
+        ], style={'width': '20%', 'display': 'inline-block', 'vertical-align': 'top', 'margin-left': '100px'}),
         
         # Pokémon Dropdowns and Images
         html.Div([
@@ -116,17 +116,17 @@ app.layout = html.Div([
                         id=f'pokemon-dropdown-{i}',
                         options=[{'label': pokemon, 'value': pokemon} for pokemon in df['name']],
                         placeholder=f'Select Pokémon {i+1}',
-                        style={'width': '100%', 'margin-top': '20px'}
+                        style={'width': '90%', 'margin-top': '20px'}
                     ),
                     html.Div(id=f'image-container-{i}', style={
-                        'width': '100%', 
+                        'width': '70%', 
                         'height': '150px', 
                         'display': 'flex', 
                         'justify-content': 'center', 
                         'align-items': 'center'
                     })
                 ], style={
-                    'width': '33.33%', 
+                    'width': '30%', 
                     'padding': '5px', 
                     'box-sizing': 'border-box',
                     'margin-top': '10px'
@@ -135,10 +135,10 @@ app.layout = html.Div([
                 'width': '100%', 
                 'display': 'flex', 
                 'flex-wrap': 'wrap',
-                'justify-content': 'center',
+                'justify-content': 'right',
                 'align-items': 'flex-start'
             })
-        ], style={'width': '70%', 'display': 'inline-block', 'vertical-align': 'top', 'margin-top': '0px'}),
+        ], style={'width': '60%', 'display': 'inline-block', 'vertical-align': 'top', 'margin-top': '0px'}),
     ], style={'width': '100%', 'display': 'flex'}),
 
     html.Div([
