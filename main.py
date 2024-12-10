@@ -57,37 +57,69 @@ app.layout = html.Div([
     html.Div([
 
         html.Div([
-            html.H2("Pokémon Gym Leader Battle Simulator", style={'margin': 0}),
-            html.H3("The dashboard helps players make informed decisions when optimizing their Pokémon teams to take on specific Gym Leaders.", style={'margin': 0, 'font-weight': 'normal'})
+            html.H2("Pokémon Gym Leader Battle Simulator", 
+                    style={
+                        'textAlign': 'left',
+                        'fontFamily': 'Calibri',
+                        'fontSize': '36px',
+                        'marginBottom': '10px',
+                        'color': '#2F4F4F'  # Dark slate gray color
+                    }
+            ),
+            html.P("The dashboard helps players make informed decisions when optimizing their Pokémon teams to take on specific Gym Leaders.", 
+                    style={
+                        'textAlign': 'left',
+                        'fontFamily': 'Calibri',
+                        'fontSize': '16px',
+                        'marginBottom': '20px',
+                        'color': '#696969'  # Dimgray color
+                    }
+            )
         ], style={
             'display': 'inline-block',
             'vertical-align': 'top',
-            'width': '70%',
+            'width': '65%',
             'box-sizing': 'border-box',
             'font-family': 'Calibri'  # 設定 Calibri 字體
         }),
 
         # Instructions Section
-        html.Div(
-            "Ready to start your journey? Select a Pokémon Gym Leader and build your line-up to unlock strategic insights tailored to your challenge!",
-            style={
-                'display': 'inline-block',
+        html.Div([
+            html.H2("Welcome, Trainer!", 
+                style={
+                    'margin-bottom': '10px',
+                    'font-family': 'Calibri',
+                    'color': '#2F4F4F',
+                    'font-size': '24px'
+                }),
+            html.Div(id='instruction-text', style={
                 'text-align': 'left',
-                'vertical-align': 'top',
-                'width': '30%',
-                'font-size': '20px',
-                'box-sizing': 'border-box',
-                'font-family': 'Calibri'  # 設定 Calibri 字體
-            }
-        )
+                'line-height': '1.6',
+                'padding': '20px',
+                'background-color': 'rgba(255, 255, 255, 0.7)',
+                'border-radius': '10px',
+                'border': '2px solid #e0e0e0',
+                'box-shadow': '0 2px 4px rgba(0,0,0,0.05)',
+                'font-family': 'Calibri',
+                'font-size': '18px',
+                'color': '#444',
+                'margin': '10px 0'
+            })
+        ], style={
+            'width': '30%',
+            'display': 'inline-block',
+            'vertical-align': 'top',
+            'marginLeft': 'auto',
+            'marginTop': '0px',
+            'padding': '10px',
+            'float': 'right'
+        })
     ], style={
         'display': 'flex',
-        'width': '100%',
-        'justify-content': 'space-between',
-        'align-items': 'flex-start',  # Aligns items at the top
-        'box-sizing': 'border-box',
-        'font-family': 'Calibri',
-        'padding-left': '20px'
+        'justifyContent': 'space-between',
+        'alignItems': 'flex-start',
+        'marginBottom': '30px',
+        'width': '100%'
     }),
 
     # Top row with Gym Leader and their Pokémon
@@ -123,12 +155,13 @@ app.layout = html.Div([
             dcc.Graph(id="bar-chart-1",style={'height':'400px','width': '95%'}),
             html.Div("Use this to build your team to counter the gym leader's most common type.",
                 style={'display': 'flex', 'flexDirection': 'column', 'alignItems': 'center','font-size': '14px', 'color': 'gray', 'font-family': 'Calibri','white-space': 'normal'}) 
-        ], ), 
-    ], style={
+            ], ), 
+        ], style={
         'width': '100%', 'display': 'flex','height':'450px',
         'background-color': '#EDF2F4',
         'border-radius': '10px',
         'margin-top': '20px'}),
+    
 
 
     # Second row with Team Pokémon
@@ -397,8 +430,8 @@ def update_content(selected_pokemon_0, selected_pokemon_1, selected_pokemon_2,
                 'theta': list(team_stats.keys()),
                 'fill': 'toself',
                 'name': 'Team Total',
-                'marker': {'color': 'red'},
-                'line': {'color': 'red'}
+                'marker': {'color': '#FFD700'},
+                'line': {'color': '#FFD700'}
             },
             {
                 'type': 'scatterpolar',
@@ -406,8 +439,8 @@ def update_content(selected_pokemon_0, selected_pokemon_1, selected_pokemon_2,
                 'theta': list(leader_stats.keys()),
                 'fill': 'toself',
                 'name': f"{selected_leader}'s Team Total",
-                'marker': {'color': 'blue'},
-                'line': {'color': 'blue'}
+                'marker': {'color': '#6798C0'},
+                'line': {'color': '#6798C0'}
             }
         ],
         'layout': {
@@ -720,6 +753,73 @@ def update_content(selected_leader, *selected_pokemons):
             yaxis=dict(showgrid=False) )
 
         return [fig]
+
+#-----------------------------------------------------------------------------------------------
+# Callback for updating the instructions
+@app.callback(
+    Output('instruction-text', 'children'),
+    [Input('gym-leader-dropdown', 'value')] +
+    [Input(f'pokemon-dropdown-{i}', 'value') for i in range(6)] +
+    [Input('heatmap', 'figure')]
+)
+def update_instructions(selected_leader, *args):
+    selected_pokemons = args[:6]
+    heatmap_data = args[6]
+
+    if not selected_leader:
+        return [
+            "🎮 Please select a Gym Leader to begin!",
+            html.Br(),
+            html.Br(),
+            "Choose your opponent from the dropdown menu above."
+        ]
+
+    if not any(selected_pokemons):
+        return [
+            "🔍 Time to build your team!",
+            html.Br(),
+            html.Br(),
+            f"Select your Pokémon to challenge {selected_leader}."
+        ]
+
+    # Get the number of Pokémon the leader has
+    leader_pokemon_count = merged_df[merged_df['leader'] == selected_leader]['pokemon'].nunique()
+
+    # Check if the user has selected the same number of Pokémon as the leader
+    selected_pokemon_count = len([pokemon for pokemon in selected_pokemons if pokemon is not None])
+    if selected_pokemon_count < leader_pokemon_count:
+        return [
+            "⚠️ You need to select more Pokémon!",
+            html.Br(),
+            html.Br(),
+            f"Select {leader_pokemon_count - selected_pokemon_count} more Pokémon to match the leader's team."
+        ]
+    
+    # Check heatmap data for 'No effect' and 'Not Very Effective' values
+    has_ineffective_matchup = False
+    for trace in heatmap_data['data']:
+        if 'text' in trace:
+            for text in trace['text']:
+                if text == '0' or text == '0.5':
+                    has_ineffective_matchup = True
+                    break
+        if has_ineffective_matchup:
+            break
+                    
+    if has_ineffective_matchup:
+        return [
+            "⚠️ Some matchups need attention!",
+            html.Br(),
+            html.Br(),
+            "Your team has Pokémon with 'Not Very Effective' or 'No Effect' against the Gym Leader's team. Consider adjusting your team composition."
+        ]   
+
+    return [
+        "🏆 Ready to battle!",
+        html.Br(),
+        html.Br(),
+        "Your team is set. Check the radar chart to see how your stats compare!"
+    ]
 
 
 #-----------------------------------------------------------------------------------------------
