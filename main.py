@@ -263,7 +263,7 @@ app.layout = html.Div([
             dcc.Graph(id='radar-chart', style={'width': '90%', 'height': '390px', 'margin': 'auto'}),
             html.Div("Compare the stats of your Pokémon team with the Gym Leader's team. It highlights the strengths and weaknesses of each Pokémon, giving you insights into how to optimize your team based on these comparisons.",
                 style={'display': 'flex', 'flexDirection': 'column', 'alignItems': 'center','font-size': '14px', 'color': 'gray', 'font-family': 'Calibri','padding-left': '20px',  'padding-right': '20px' }) 
-        ], style={'width': '100%', 'margin-top': '10px', 'align-items': 'flex-start','justify-content': 'center', 'background-color': 'transparent','margin-left': '20px',
+        ], style={'width': '95%', 'margin-top': '10px', 'align-items': 'flex-start','justify-content': 'center', 'background-color': 'transparent','margin-left': '20px',
                 'background-color': '#EDF2F4',
                 'border-radius': '10px',
                 'margin-top': '20px'}),
@@ -447,7 +447,7 @@ def update_content(selected_pokemon_0, selected_pokemon_1, selected_pokemon_2,
             'polar': {
                 'radialaxis': {
                     'visible': True,
-                    'range': [0, max(max(team_stats.values()), max(leader_stats.values())) + 50]  # Adjust the range as needed
+                    'range': [0, max(max(team_stats.values()), max(leader_stats.values())) + 100]  # Adjust the range as needed
                 },
                 'bgcolor': 'transparent'
             },
