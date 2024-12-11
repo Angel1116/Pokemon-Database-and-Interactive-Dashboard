@@ -57,23 +57,13 @@ app.layout = html.Div([
     html.Div([
 
         html.Div([
-            html.H3("Path to Victory: Pokémon Dashboard", 
+            html.H2("Pokémon Gym Leader Battle Simulator", 
                     style={
                         'textAlign': 'center',
                         'fontFamily': 'Calibri',
                         'fontSize': '36px',
                         'marginBottom': '10px',
                         'marginTop': '80px',
-                        'color': '#2F4F4F'  # Dark slate gray color
-                    }
-            ),
-            html.H2("Pokémon Team Optimization for battles", 
-                    style={
-                        'textAlign': 'center',
-                        'fontFamily': 'Calibri',
-                        'fontSize': '36px',
-                        'marginBottom': '10px',
-                        'marginTop': '10px',
                         'color': '#2F4F4F'  # Dark slate gray color
                     }
             ),
@@ -156,7 +146,7 @@ app.layout = html.Div([
             'font-family': 'Calibri',  # 設定 Calibri 字體
             'height': '30px',
             'margin-top': '80px',
-            'margin-left': '10px',
+            'margin-left': '50px',
             'margin-right': '55px',
             
         }),
@@ -184,8 +174,14 @@ app.layout = html.Div([
                 placeholder="Select Your Character",
                 style={'width': '150px', 'display': 'inline-block', 'font-family': 'Calibri'}  # 設定 Calibri 字體
             ),
-            html.Div(id='player-image', style={'margin-top': '0px',  'height': '290px'})
-        ], style={'width': '20%', 'display': 'inline-block', 'vertical-align': 'top', 'margin-left': '20px', 'font-family': 'Calibri'}),  # 設定 Calibri 字體
+            html.Div(
+                id='player-image', 
+                style={
+                    'margin-top': '10px',
+                    'height': '350px',  # Increased from 290px
+                    'display': 'flex'
+                })
+        ], style={'width': '200%', 'display': 'inline-block', 'vertical-align': 'top', 'margin-left': '20px', 'font-family': 'Calibri'}),  # 設定 Calibri 字體
 
 
         # Pokémon Dropdowns and Images
@@ -316,12 +312,9 @@ def update_leader_info(selected_leader):
 
     # Create the leader info div
     leader_info = html.Div([
-        html.Img(src=leader_image_path, style={ 'margin-left': '15px', 'height': '150px'}),
-    ],style={
-                'display': 'flex',
-                'justify-content': 'left',  # Centers horizontally
-                'width': '100%'
-    })
+        html.Img(src=leader_image_path, style={'height': '150px'}),
+        html.H3(selected_leader)
+    ])
 
     # Create the Pokémon images div with names and types
     pokemon_images = []  # Ensure this is inside the function
@@ -335,10 +328,9 @@ def update_leader_info(selected_leader):
                 ),
 
                 # Pokémon types
-                html.Div(
-                    f"Type: {row['type1']}" if pd.isna(row['type2']) else f"Type: {row['type1']} / {row['type2']}",
-                    style={'text-align': 'center', 'font-size': '12px', 'color': 'gray'}
-                )
+                html.Div(f"Type: {row['type1']} / {row['type2'] if pd.notna(row['type2']) else 'None'}",
+                         style={'text-align': 'center', 'font-size': '12px', 'color': 'gray'})
+      
             ], style={
                 'display': 'flex',
                 'flex-direction': 'column',
@@ -397,10 +389,8 @@ def update_content(selected_pokemon_0, selected_pokemon_1, selected_pokemon_2,
             pokemon_types = df[df['name'] == selected_pokemon][['type1', 'type2']].iloc[0]
             images.append(html.Div([
                 html.Img(src=image_path, style={'max-width': '100%', 'max-height': '150px'}),
-                html.Div(
-                    f"Type: {pokemon_types['type1']}" if pd.isna(pokemon_types['type2']) else f"Type: {pokemon_types['type1']} / {pokemon_types['type2']}",
-                    style={'text-align': 'center', 'font-size': '12px', 'color': 'gray'}
-                )
+                html.Div(f"Type: {pokemon_types['type1']} / {pokemon_types['type2'] if pd.notna(pokemon_types['type2']) else 'None'}",
+                         style={'text-align': 'center', 'font-size': '12px', 'color': 'gray'})
             ], style={
                 'display': 'flex',
                 'flex-direction': 'column',
@@ -850,7 +840,7 @@ def update_player_image(selected_player):
     if selected_player is None:
         return ""
 
-    return html.Img(src=selected_player, style={'height': '180px'})
+    return html.Img(src=selected_player, style={'height': '190px'})
 
 
 # Callback for barchart1
