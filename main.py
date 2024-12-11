@@ -59,19 +59,20 @@ app.layout = html.Div([
         html.Div([
             html.H2("Pokémon Gym Leader Battle Simulator", 
                     style={
-                        'textAlign': 'left',
+                        'textAlign': 'center',
                         'fontFamily': 'Calibri',
                         'fontSize': '36px',
                         'marginBottom': '10px',
+                        'marginTop': '80px',
                         'color': '#2F4F4F'  # Dark slate gray color
                     }
             ),
             html.P("The dashboard helps players make informed decisions when optimizing their Pokémon teams to take on specific Gym Leaders.", 
                     style={
-                        'textAlign': 'left',
+                        'textAlign': 'center',
                         'fontFamily': 'Calibri',
                         'fontSize': '16px',
-                        'marginBottom': '20px',
+                        'marginBottom': '50px',
                         'color': '#696969'  # Dimgray color
                     }
             )
