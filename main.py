@@ -11,10 +11,10 @@ import numpy as np
 import math
 
 # Load the Gym.csv and Gym_Pokemon.csv files into DataFrames
-gym_df = pd.read_csv('Gym.csv')
-gym_pokemon_df = pd.read_csv('Gym_Pokemon.csv')
+gym_df = pd.read_csv('db/fixtures/Gym.csv')
+gym_pokemon_df = pd.read_csv('db/fixtures/Gym_Pokemon.csv')
 # Load the Pokemon.csv file into a DataFrame
-df = pd.read_csv('Pokemon.csv', encoding='latin1')
+df = pd.read_csv('db/fixtures/Pokemon.csv', encoding='latin1')
 
 # Merge the DataFrames on the gym_id column
 merged_df = pd.merge(gym_df, gym_pokemon_df, on='gym_id')
@@ -98,7 +98,7 @@ app.layout = html.Div([
         html.Div([
             html.H2("Welcome, Trainer!", 
                 style={
-                    'margin-bottom': '10px',
+                    'margin-bottom': '5px',
                     'font-family': 'Calibri',
                     'color': '#2F4F4F',
                     'font-size': '24px'
@@ -121,7 +121,8 @@ app.layout = html.Div([
             'display': 'inline-block',
             'vertical-align': 'top',
             'marginLeft': 'auto',
-            'marginTop': '0px',
+            'margin-right': '30px',
+            'marginTop': '45px',
             'padding': '10px',
             'float': 'right'
         })
@@ -787,14 +788,12 @@ def update_instructions(selected_leader, *args):
         return [
             "🎮 Please select a Gym Leader to begin!",
             html.Br(),
-            html.Br(),
-            "Choose your opponent from the dropdown menu above."
+            "Choose your opponent from the dropdown menu below."
         ]
 
     if not any(selected_pokemons):
         return [
             "🔍 Time to build your team!",
-            html.Br(),
             html.Br(),
             f"Select your Pokémon to challenge {selected_leader}."
         ]
@@ -807,7 +806,6 @@ def update_instructions(selected_leader, *args):
     if selected_pokemon_count < leader_pokemon_count:
         return [
             "⚠️ You need to select more Pokémon!",
-            html.Br(),
             html.Br(),
             f"Select {leader_pokemon_count - selected_pokemon_count} more Pokémon to match the leader's team."
         ]
@@ -827,13 +825,11 @@ def update_instructions(selected_leader, *args):
         return [
             "⚠️ Some matchups need attention!",
             html.Br(),
-            html.Br(),
             "Your team has Pokémon with 'Not Very Effective' or 'No Effect' against the Gym Leader's team. Consider adjusting your team composition."
         ]   
 
     return [
         "🏆 Ready to battle!",
-        html.Br(),
         html.Br(),
         "Your team is set. Check the radar chart to see how your stats compare!"
     ]
