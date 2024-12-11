@@ -2,26 +2,22 @@
 
 ## Dashboard Overview
 
-### State 1: No Input Detected
-**Message:**  
+### State 1: No Input Detected  
 Ready to start your journey? Select a Pokémon Gym Leader and build your line-up to unlock strategic insights tailored to your challenge!
 
-**Next step:**
+**Instructions:**
 - Use the dropdown menus to choose the Gym Leader and build your line-up.
 - Once selected, the dashboard will generate analysis and recommendations for your team-building strategy.
 
-### State 2: Team Adjustment Recommendation
-**Message:**  
+### State 2: Team Adjustment Recommendation 
 Optimize your team composition! Based on the analysis of type matchups and stat comparisons, we suggest the following changes:
 
-**Next step:**
+**Instructions:**
 - **Current Pokémon:** {Pikachu}
 - **Replacement Reason:**  
   - **Type Disadvantage:** {Pikachu}'s {Electric} type is weak against the Gym Leader's {Ground-type} Pokémon, rendering its attacks ineffective.
-  - **Stat Concern:** {Pikachu}'s Defense (35) is significantly lower than the Gym Leader’s team average Defense (65), making it vulnerable to physical attacks from the Gym Leader’s Pokémon.
 
 ### State 3: Victory-Ready Team
-**Message:**  
 Your current team is primed for victory! The analysis confirms your Pokémon are well-suited to defeat the Gym Leader.
 
 **Next step:**
