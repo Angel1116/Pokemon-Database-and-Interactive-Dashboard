@@ -10,6 +10,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
+# Initialize the Dash app
+app = dash.Dash(__name__)
+
+# For deployment
+server = app.server
+
 # Load the Gym.csv and Gym_Pokemon.csv files into DataFrames
 gym_df = pd.read_csv('db/fixtures/Gym.csv')
 gym_pokemon_df = pd.read_csv('db/fixtures/Gym_Pokemon.csv')
@@ -47,11 +53,7 @@ counter_data = {
 }
 counter_df = pd.DataFrame(counter_data)
 
-# Initialize the Dash app
-app = dash.Dash(__name__)
 
-# For deployment
-server = app.server
 
 # Define the layout of the app
 app.layout = html.Div([
