@@ -83,7 +83,7 @@ pokemon_generation,name,type1,type2,HP,attack,defense,special_attack,special_def
 1,Mew,Psychic,,100,100,100,100,100,100
 1,Mewtwo,Psychic,,106,110,90,154,90,130
 1,Moltres,Fire,Flying,90,100,90,125,85,90
-1,Mr. Mime,Psychic,,40,45,65,100,120,90
+1,Mr_Mime,Psychic,,40,45,65,100,120,90
 1,Muk,Poison,,105,105,75,65,100,50
 1,Nidoking,Poison,Ground,81,102,77,85,75,85
 1,Nidoqueen,Poison,Ground,90,92,87,75,85,76
