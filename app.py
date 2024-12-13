@@ -82,20 +82,12 @@ app.layout = html.Div([
                         'color': '#2F4F4F'  # Dark slate gray color
                     }
             ),
-            html.P("The dashboard helps players make informed decisions when optimizing their Pokémon teams to take on specific Gym Leaders.", 
-                    style={
-                        'textAlign': 'center',
-                        'fontFamily': 'Calibri',
-                        'fontSize': '16px',
-                        'marginBottom': '50px',
-                        'color': '#696969'  # Dimgray color
-                    }
-            )
         ], style={
             'display': 'inline-block',
             'vertical-align': 'top',
             'width': '65%',
             'box-sizing': 'border-box',
+            'box-shadow': '0 2px 4px rgba(0,0,0,0.05)',
             'font-family': 'Calibri'  # 設定 Calibri 字體
         }),
 

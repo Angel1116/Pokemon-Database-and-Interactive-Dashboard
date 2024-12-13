@@ -1,0 +1,8 @@
+/* assets/styles.css */
+body {
+    background-image: url('/assets/background/pokeball.jpg'); /* Replace with your image path */
+    background-size: cover; /* Ensure the image covers the entire background */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-attachment: fixed; /* Ensure the background image stays fixed */
+    background-position: center; /* Center the background image */
+}
