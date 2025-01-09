@@ -1,5 +1,5 @@
 # Path to Victory: Pokémon Dashboard
-![dashboard2](https://github.com/user-attachments/assets/52b1dc49-94d1-4403-af48-96a9711796d9)
+![dashboard3](https://github.com/user-attachments/assets/20af3ee0-5e7c-4c35-89d0-8ac7cbca1ff2)
 
 ## Dashboard Overview
 
