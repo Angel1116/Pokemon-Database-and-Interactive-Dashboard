@@ -1,6 +1,19 @@
 # Path to Victory: Pokémon Dashboard
 ![dashboard3](https://github.com/user-attachments/assets/20af3ee0-5e7c-4c35-89d0-8ac7cbca1ff2)
 
+## Introduction
+This is my team project. My contributions are as follows:
+**For the database:**
+- Building and refining the database, ensuring its connections and logic were consistent and error-free
+- Integrating the database with the code and transforming the imported data into a more user-friendly format
+- 
+**For the dashboard**
+- Designing and implementing the “Individual Stats Distribution” visualization on the dashboard
+- Modifying the code for the “Type Tactic Matrix”
+- Adjusting dashboard layout
+- Deploying the dashboard
+
+
 ## Dashboard Overview
 
 ### State 1: No Input Detected  
