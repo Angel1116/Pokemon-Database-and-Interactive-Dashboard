@@ -1,6 +1,7 @@
 # Path to Victory: Pokémon Dashboard
 
 ## Dashboard Overview
+![dashboard](https://github.com/user-attachments/assets/5c1bc97e-387b-4d00-b3b6-064d265d2371)
 
 ### State 1: No Input Detected  
 Ready to start your journey? Select a Pokémon Gym Leader and build your line-up to unlock strategic insights tailored to your challenge!
