@@ -3,10 +3,11 @@
 
 ## Introduction
 This is my team project. My contributions are as follows:
+
 **For the database:**
 - Building and refining the database, ensuring its connections and logic were consistent and error-free
 - Integrating the database with the code and transforming the imported data into a more user-friendly format
-- 
+  
 **For the dashboard**
 - Designing and implementing the “Individual Stats Distribution” visualization on the dashboard
 - Modifying the code for the “Type Tactic Matrix”
